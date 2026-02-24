@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "raw_material")
+@Table(name = "raw_material", uniqueConstraints = { @UniqueConstraint(columnNames = {"code"})})
 public class RawMaterial implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

@@ -51,6 +51,11 @@ public class ProductServices {
 
         Product product = parseObject(productDTO, Product.class);
 
+        // The code of a product must be UNIQUE
+        if (repository.existsByCode(productDTO.getCode())) {
+            throw new IllegalArgumentException("Product code already exists!");
+        }
+
         product.setRawMaterialList(new ArrayList<>());
 
         rawMaterialValidation(product, productDTO.getRawMaterials());
@@ -65,6 +70,11 @@ public class ProductServices {
         logger.info("Updating one product!");
 
         Product entity = repository.findById(productDTO.getId()). orElseThrow( () -> new ResourceNotFoundException("No records found for this ID!"));
+
+        // The code of a product must be UNIQUE
+        if (repository.existsByCodeAndIdNot(productDTO.getCode(), entity.getId())) {
+            throw new IllegalArgumentException("Product code already exists!");
+        }
 
         entity.getRawMaterialList().clear(); // Resets the raw materials list to delete old raw materials.
 

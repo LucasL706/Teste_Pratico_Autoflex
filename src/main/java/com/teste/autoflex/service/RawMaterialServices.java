@@ -43,6 +43,11 @@ public class RawMaterialServices  {
         public RawMaterialDTO create(RawMaterialDTO rawMaterialDTO) {
             logger.info("Creating one raw material!");
 
+            // The code of a raw material must be UNIQUE
+            if (repository.existsByCode(rawMaterialDTO.getCode())) {
+                throw new IllegalArgumentException("Raw material code already exists!");
+            }
+
             RawMaterial rawMaterial = parseObject(rawMaterialDTO, RawMaterial.class);
 
             rawMaterial.setProducts(new ArrayList<>());
@@ -50,14 +55,20 @@ public class RawMaterialServices  {
             return parseObject(repository.save(rawMaterial), RawMaterialDTO.class);
     }
 
-    public RawMaterialDTO update(RawMaterialDTO rawMaterial) {
+    @Transactional
+    public RawMaterialDTO update(RawMaterialDTO rawMaterialDTO) {
         logger.info("Updating one raw material!");
 
-        RawMaterial entity = repository.findById(rawMaterial.getId()). orElseThrow( () -> new ResourceNotFoundException("No records found for this ID!"));
+        RawMaterial entity = repository.findById(rawMaterialDTO.getId()). orElseThrow( () -> new ResourceNotFoundException("No records found for this ID!"));
 
-        entity.setCode(rawMaterial.getCode());
-        entity.setName(rawMaterial.getName());
-        entity.setStockQuantity(rawMaterial.getStockQuantity());
+        // The code of a raw material must be UNIQUE
+        if (repository.existsByCodeAndIdNot(rawMaterialDTO.getCode(), entity.getId())) {
+            throw new IllegalArgumentException("Raw material code already exists!");
+        }
+
+        entity.setCode(rawMaterialDTO.getCode());
+        entity.setName(rawMaterialDTO.getName());
+        entity.setStockQuantity(rawMaterialDTO.getStockQuantity());
 
         return parseObject(repository.save(entity), RawMaterialDTO.class);
     }
@@ -65,6 +76,9 @@ public class RawMaterialServices  {
     public void delete(Long id) {
         logger.info("Deleting one rawMaterial!");
         RawMaterial entity = repository.findById(id). orElseThrow( () -> new ResourceNotFoundException("No records found for this ID!"));
+        if(!entity.getProducts().isEmpty()){
+            throw new IllegalArgumentException("Cannot delete raw material that is associated with products");
+        }
         repository.delete(entity);
     }
 
