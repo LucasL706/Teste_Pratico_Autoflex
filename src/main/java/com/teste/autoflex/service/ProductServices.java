@@ -47,36 +47,19 @@ public class ProductServices {
 
     @Transactional
     public ProductDTO create(ProductDTO productDTO) {
-        logger.info("Creating one person!");
+        logger.info("Creating one product!");
 
         Product product = parseObject(productDTO, Product.class);
 
         product.setRawMaterialList(new ArrayList<>());
 
-        if(productDTO.getRawMaterials() != null){ // Validação para saber se as matérias primas enviadas pelo usuário está registrada no BD, caso alguma não esteja a operação não prossegue.
-            for(ProductRawMaterialDTO rmDTO : productDTO.getRawMaterials()){
-                RawMaterial rawMaterial = rawMaterialrepository.findById(rmDTO.getRawMaterialId()).orElseThrow(()
-                        -> new ResourceNotFoundException("Raw material with ID " + rmDTO.getRawMaterialId() + " not found!"));
-
-                if(rmDTO.getRequiredQuantity() == null || rmDTO.getRequiredQuantity().compareTo(BigDecimal.ZERO) <= 0){ // Não será aceito quantidade menor ou igual a zero de matérias primas necessárias para produzir um produto
-                    throw new IllegalArgumentException("The quantity must be greater than zero");
-                }
-
-                ProductRawMaterial productRawMaterial = new ProductRawMaterial();
-                productRawMaterial.setProduct(product);
-                productRawMaterial.setRawMaterial(rawMaterial);
-                productRawMaterial.setRequiredQuantity(rmDTO.getRequiredQuantity());
-
-                product.getRawMaterialList().add(productRawMaterial);
-
-            }
-        }
+        rawMaterialValidation(product, productDTO.getRawMaterials());
 
         return parseObject(repository.save(product), ProductDTO.class);
     }
 
     public ProductDTO update(ProductDTO product) {
-        logger.info("Updating one person!");
+        logger.info("Updating one product!");
 
         Product entity = repository.findById(product.getId()). orElseThrow( () -> new ResourceNotFoundException("No records found for this ID!"));
 
@@ -88,9 +71,40 @@ public class ProductServices {
     }
 
     public void delete(Long id) {
-        logger.info("Deleting one person!");
+        logger.info("Deleting one product!");
         Product entity = repository.findById(id). orElseThrow( () -> new ResourceNotFoundException("No records found for this ID!"));
         repository.delete(entity);
     }
 
+    /** Validação para saber se as matérias primas enviadas pelo usuário está registrada no BD, caso alguma não esteja a operação não prossegue.
+     *  O produto cadastrado deve obrigatóriamente possuir uma matéria prima associada.
+     *  Não será aceito quantidade menor ou igual a zero de matérias primas necessárias para produzir um produto
+     *
+     * @param product
+     * @param rawMaterials
+     */
+    public void rawMaterialValidation(Product product, List<ProductRawMaterialDTO> rawMaterials){
+
+        if (rawMaterials == null || rawMaterials.isEmpty()){
+            throw new IllegalArgumentException("Product must have at least one raw material with quantity greater than zero");
+        }
+
+        for(ProductRawMaterialDTO rmDTO : rawMaterials){
+            RawMaterial rawMaterial = rawMaterialrepository.findById(rmDTO.getRawMaterialId()).orElseThrow(()
+                    -> new ResourceNotFoundException("Raw material with ID " + rmDTO.getRawMaterialId() + " not found!"));
+
+            if(rmDTO.getRequiredQuantity() == null || rmDTO.getRequiredQuantity().compareTo(BigDecimal.ZERO) <= 0){
+                throw new IllegalArgumentException("The quantity must be greater than zero");
+            }
+
+            ProductRawMaterial productRawMaterial = new ProductRawMaterial();
+
+            productRawMaterial.setProduct(product);
+            productRawMaterial.setRawMaterial(rawMaterial);
+            productRawMaterial.setRequiredQuantity(rmDTO.getRequiredQuantity());
+
+            product.getRawMaterialList().add(productRawMaterial);
+
+        }
+    }
 }

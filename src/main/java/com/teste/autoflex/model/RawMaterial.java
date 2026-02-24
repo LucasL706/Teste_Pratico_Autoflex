@@ -64,6 +64,14 @@ public class RawMaterial implements Serializable {
         this.stockQuantity = stockQuantity;
     }
 
+    public List<ProductRawMaterial> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<ProductRawMaterial> products) {
+        this.products = products;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof RawMaterial that)) return false;
