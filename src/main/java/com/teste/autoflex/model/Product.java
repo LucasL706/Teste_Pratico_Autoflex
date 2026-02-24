@@ -74,11 +74,11 @@ public class Product implements Serializable{
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Product product)) return false;
-        return getId() == product.getId() && Objects.equals(getCode(), product.getCode()) && Objects.equals(getName(), product.getName()) && Objects.equals(getPrice(), product.getPrice()) && Objects.equals(rawMaterials, product.rawMaterials);
+        return getId() == product.getId();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getCode(), getName(), getPrice(), rawMaterials);
+        return Objects.hashCode(getId());
     }
 }

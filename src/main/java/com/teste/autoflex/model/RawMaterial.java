@@ -67,11 +67,11 @@ public class RawMaterial implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof RawMaterial that)) return false;
-        return getId() == that.getId() && Objects.equals(getCode(), that.getCode()) && Objects.equals(getName(), that.getName()) && Objects.equals(getStockQuantity(), that.getStockQuantity()) && Objects.equals(products, that.products);
+        return getId() == that.getId();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getCode(), getName(), getStockQuantity(), products);
+        return Objects.hashCode(getId());
     }
 }

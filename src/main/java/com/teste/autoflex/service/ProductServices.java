@@ -4,14 +4,21 @@ import com.teste.autoflex.data.dto.ProductDTO;
 import static com.teste.autoflex.mapper.ObjectMapper.parseListObjects;
 import static com.teste.autoflex.mapper.ObjectMapper.parseObject;
 
+import com.teste.autoflex.data.dto.ProductRawMaterialDTO;
 import com.teste.autoflex.exception.ResourceNotFoundException;
 import com.teste.autoflex.model.Product;
+import com.teste.autoflex.model.ProductRawMaterial;
+import com.teste.autoflex.model.RawMaterial;
 import com.teste.autoflex.repository.ProductRepository;
+import com.teste.autoflex.repository.RawMaterialRepository;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,6 +28,8 @@ public class ProductServices {
 
     @Autowired
     ProductRepository repository;
+    @Autowired
+    RawMaterialRepository rawMaterialrepository;
 
     public List<ProductDTO> findAll(){
         logger.info("Finding all products!");
@@ -36,12 +45,34 @@ public class ProductServices {
         return parseObject(entity, ProductDTO.class);
     }
 
+    @Transactional
     public ProductDTO create(ProductDTO productDTO) {
         logger.info("Creating one person!");
 
-        var entity = parseObject(productDTO, Product.class);
+        Product product = parseObject(productDTO, Product.class);
 
-        return parseObject(repository.save(entity), ProductDTO.class);
+        product.setRawMaterialList(new ArrayList<>());
+
+        if(productDTO.getRawMaterials() != null){ // Validação para saber se as matérias primas enviadas pelo usuário está registrada no BD, caso alguma não esteja a operação não prossegue.
+            for(ProductRawMaterialDTO rmDTO : productDTO.getRawMaterials()){
+                RawMaterial rawMaterial = rawMaterialrepository.findById(rmDTO.getRawMaterialId()).orElseThrow(()
+                        -> new ResourceNotFoundException("Raw material with ID " + rmDTO.getRawMaterialId() + " not found!"));
+
+                if(rmDTO.getRequiredQuantity() == null || rmDTO.getRequiredQuantity().compareTo(BigDecimal.ZERO) <= 0){ // Não será aceito quantidade menor ou igual a zero de matérias primas necessárias para produzir um produto
+                    throw new IllegalArgumentException("The quantity must be greater than zero");
+                }
+
+                ProductRawMaterial productRawMaterial = new ProductRawMaterial();
+                productRawMaterial.setProduct(product);
+                productRawMaterial.setRawMaterial(rawMaterial);
+                productRawMaterial.setRequiredQuantity(rmDTO.getRequiredQuantity());
+
+                product.getRawMaterialList().add(productRawMaterial);
+
+            }
+        }
+
+        return parseObject(repository.save(product), ProductDTO.class);
     }
 
     public ProductDTO update(ProductDTO product) {
