@@ -1,36 +1,27 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-
-export default function ProductList() {
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    axios.get("http://localhost:8080/rawMaterial")
-      .then(response => setProducts(response.data))
-      .catch(err => console.error(err));
-  }, []);
-
+export default function RawMaterialList({ rawMaterials }) {
   return (
     <div className="container">
-      <h2>Lista de Produtos</h2>
+      <h2>List of Raw Materials</h2>
 
-      {products.length === 0 ? (
-        <p>Nenhum produto cadastrado.</p>
+      {rawMaterials.length === 0 ? (
+        <p>None raw material is registered.</p>
       ) : (
-        <table className="product-table">
+        <table className="rawMaterial-table">
           <thead>
             <tr>
               <th>ID</th>
-              <th>Nome</th>
-              <th>Código</th>
+              <th>Code</th>
+              <th>Name</th>
+              <th>Quantity</th>
             </tr>
           </thead>
           <tbody>
-            {products.map(p => (
+            {rawMaterials.map(p => (
               <tr key={p.id}>
                 <td>{p.id}</td>
-                <td>{p.name}</td>
                 <td>{p.code}</td>
+                <td>{p.name}</td>
+                <td>{p.quantity}</td>
               </tr>
             ))}
           </tbody>

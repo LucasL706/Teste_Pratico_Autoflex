@@ -1,39 +1,78 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import ProductList from "./components/ProductList";
-import ProductForm from "./components/ProductForm";
-import "./App.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect, useState } from "react";
+import "./App.css"
+import Home from "./pages/Home";
+import CreateProduct from "./pages/CreateProduct";
+import RawMaterialPage from "./pages/RawMaterialPage";
+import CreateRawMaterial from "./pages/CreateRawMaterial";
 
 function App() {
+
   const [products, setProducts] = useState([]);
   const [rawMaterials, setRawMaterials] = useState([]);
 
-  useEffect(() => {
-    axios.get("http://localhost:8080/rawMaterial")
-      .then(res => setRawMaterials(res.data))
-      .catch(err => console.error(err));
-  }, []);
-
-  useEffect(() => {
-    axios.get("http://localhost:8080/product")
-      .then(res => setProducts(res.data))
-      .catch(err => console.error(err));
-  }, []);
-
-  const fetchProducts = () => {
-    axios.get("http://localhost:8080/product")
-      .then(response => setProducts(response.data))
-      .catch(error => console.error(error));
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/product");
+      const data = await response.json();
+      setProducts(data);
+    } catch (error) {
+      console.error("Erro ao buscar produtos:", error);
+    }
   };
 
+  const fetchRawMaterials = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/rawMaterial");
+      const data = await response.json();
+      setRawMaterials(data);
+    } catch (error) {
+      console.error("Erro ao buscar matérias-primas:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+    fetchRawMaterials();
+  }, []);
+
   return (
-    <div className="App">
-      <h1>Stock Control</h1>
+    <Router>
+      <Routes>
 
-      <ProductForm onProductAdded={fetchProducts} rawMaterials={rawMaterials}/>
+        <Route
+          path="/"
+          element={<Home products={products} />}
+        />
 
-      <ProductList products={products} />
-    </div>
+        <Route
+          path="/products/create"
+          element={
+            <CreateProduct
+              rawMaterials={rawMaterials}
+              onProductAdded={fetchProducts}
+            />
+          }
+        />
+
+        <Route
+          path="/raw-materials"
+          element={
+            <RawMaterialPage rawMaterials={rawMaterials} />
+          }
+        />
+
+        <Route
+          path="/raw-materials/create"
+          element={
+            <CreateRawMaterial
+              onRawMaterialAdded={fetchRawMaterials}
+            />
+          }
+        />
+
+      </Routes>
+    </Router>
   );
 }
 

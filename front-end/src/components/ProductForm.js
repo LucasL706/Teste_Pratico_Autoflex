@@ -110,6 +110,7 @@ export default function ProductForm({ onProductAdded, rawMaterials }) {
           placeholder="Quantity"
           value={quantity}
           onChange={(e) => setQuantity(Number(e.target.value))}
+          required
         />
 
         <button type="button" onClick={addMaterial}>
