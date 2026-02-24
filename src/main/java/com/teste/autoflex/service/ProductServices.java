@@ -55,17 +55,27 @@ public class ProductServices {
 
         rawMaterialValidation(product, productDTO.getRawMaterials());
 
+        priceValidation(productDTO.getPrice());
+
         return parseObject(repository.save(product), ProductDTO.class);
     }
 
-    public ProductDTO update(ProductDTO product) {
+    @Transactional
+    public ProductDTO update(ProductDTO productDTO) {
         logger.info("Updating one product!");
 
-        Product entity = repository.findById(product.getId()). orElseThrow( () -> new ResourceNotFoundException("No records found for this ID!"));
+        Product entity = repository.findById(productDTO.getId()). orElseThrow( () -> new ResourceNotFoundException("No records found for this ID!"));
 
-        entity.setCode(product.getCode());
-        entity.setName(product.getName());
-        entity.setPrice(product.getPrice());
+        entity.getRawMaterialList().clear(); // Resets the raw materials list to delete old raw materials.
+
+        rawMaterialValidation(entity, productDTO.getRawMaterials());
+        associateRawMaterialsToProduct(entity, productDTO.getRawMaterials());
+
+        priceValidation(productDTO.getPrice());
+
+        entity.setCode(productDTO.getCode());
+        entity.setName(productDTO.getName());
+        entity.setPrice(productDTO.getPrice());
 
         return parseObject(repository.save(entity), ProductDTO.class);
     }
@@ -76,9 +86,10 @@ public class ProductServices {
         repository.delete(entity);
     }
 
-    /** Validação para saber se as matérias primas enviadas pelo usuário está registrada no BD, caso alguma não esteja a operação não prossegue.
-     *  O produto cadastrado deve obrigatóriamente possuir uma matéria prima associada.
-     *  Não será aceito quantidade menor ou igual a zero de matérias primas necessárias para produzir um produto
+    /**
+     *  Validation to check if the raw materials sent by the user are registered in the database; if any are not, the operation will not proceed.
+     *  The registered product must have an associated raw material.
+     *  A quantity of raw materials less than or equal to zero required to produce a product will not be accepted.
      *
      * @param product
      * @param rawMaterials
@@ -97,6 +108,19 @@ public class ProductServices {
                 throw new IllegalArgumentException("The quantity must be greater than zero");
             }
 
+        }
+    }
+
+    /**
+     * Association of Product - Raw Material
+     *
+     * @param product
+     * @param rawMaterials
+     */
+    private void associateRawMaterialsToProduct(Product product, List<ProductRawMaterialDTO> rawMaterials){
+        for(ProductRawMaterialDTO rmDTO : rawMaterials){
+            RawMaterial rawMaterial = rawMaterialrepository.findById(rmDTO.getRawMaterialId()).get();
+
             ProductRawMaterial productRawMaterial = new ProductRawMaterial();
 
             productRawMaterial.setProduct(product);
@@ -104,7 +128,16 @@ public class ProductServices {
             productRawMaterial.setRequiredQuantity(rmDTO.getRequiredQuantity());
 
             product.getRawMaterialList().add(productRawMaterial);
-
         }
+    }
+
+
+    /**
+     * The price must be higher than zero
+     *
+     * @param price
+     */
+    public void priceValidation(BigDecimal price){
+        if(price.compareTo(BigDecimal.ZERO) <= 0) { throw new IllegalArgumentException("The price must be higher than zero"); }
     }
 }
