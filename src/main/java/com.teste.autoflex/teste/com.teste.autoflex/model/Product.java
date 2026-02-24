@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "product")
@@ -68,5 +69,16 @@ public class Product implements Serializable{
 
     public void setRawMaterialList(List<ProductRawMaterial> rawMaterialList) {
         this.rawMaterials = rawMaterialList;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Product product)) return false;
+        return getId() == product.getId() && Objects.equals(getCode(), product.getCode()) && Objects.equals(getName(), product.getName()) && Objects.equals(getPrice(), product.getPrice()) && Objects.equals(rawMaterials, product.rawMaterials);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getCode(), getName(), getPrice(), rawMaterials);
     }
 }
