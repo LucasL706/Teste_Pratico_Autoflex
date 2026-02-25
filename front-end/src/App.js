@@ -52,7 +52,7 @@ function App() {
 
         <Route
           path="/product"
-          element={<ProductPage products={products} />}
+          element={<ProductPage products={products} fetchProducts={fetchProducts}/>}
         />
 
         <Route

@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 
 export default function RawMaterialPage({ rawMaterials, fetchRawMaterials }) {
 
-const handleDeleteRawMaterial = async (id) => {
-  await fetch(`http://localhost:8080/rawMaterial/${id}`, {
-    method: "DELETE"
-  });
+    const handleDeleteRawMaterial = async (id) => {
+      await fetch(`http://localhost:8080/rawMaterial/${id}`, {
+        method: "DELETE"
+      });
 
-  fetchRawMaterials();
-};
+      fetchRawMaterials();
+    };
 
   return (
     <div className="container">

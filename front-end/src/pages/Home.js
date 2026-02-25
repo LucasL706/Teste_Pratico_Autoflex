@@ -1,14 +1,32 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import ProductionCapacityList from "../components/ProductionCapacityList";
 
 export default function Home({ products, rawMaterials }) {
 
   const lowStockProducts = products.filter(p => p.quantity <= 5);
   const lowStockRawMaterials = rawMaterials.filter(r => r.quantity <= 5);
+  const [productionCapacity, setProductionCapacity] = useState([]);
+
+  useEffect(() => {
+    fetchProductionCapacity();
+  }, []);
+
+  const fetchProductionCapacity = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/production/productionCapacity"
+      );
+      setProductionCapacity(response.data);
+    } catch (error) {
+      console.error("Error fetching production capacity:", error);
+    }
+  };
 
   return (
     <div className="container">
       <h1>Stock Control Dashboard</h1>
-
 
       <div className="dashboard-cards">
         <div className="card">
@@ -22,28 +40,15 @@ export default function Home({ products, rawMaterials }) {
         </div>
       </div>
 
+      <div className="production-capacity">
 
-      <div className="alerts">
-        <h3>Low Stock Alerts:</h3>
-
-        {lowStockProducts.length === 0 && lowStockRawMaterials.length === 0 ? (
-          <p>No low stock items</p>
+        {productionCapacity.length === 0 ? (
+          <p>No production data available</p>
         ) : (
-          <ul>
-            {lowStockProducts.map(p => (
-              <li key={`product-${p.id}`}>
-                Product: {p.name} - {p.quantity} units
-              </li>
-            ))}
-
-            {lowStockRawMaterials.map(r => (
-              <li key={`raw-${r.id}`}>
-                Raw Material: {r.name} - {r.quantity} units
-              </li>
-            ))}
-          </ul>
+          <ProductionCapacityList capacity={productionCapacity}/>
         )}
       </div>
+
     </div>
   );
 }
