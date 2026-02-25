@@ -16,7 +16,7 @@ const handleDeleteRawMaterial = async (id) => {
       <div className="page-header">
         <h2>Raw Materials</h2>
 
-        <Link to="/raw-materials/create">
+        <Link to="/rawMaterial/create">
           <button>New Raw Material</button>
         </Link>
         </div>

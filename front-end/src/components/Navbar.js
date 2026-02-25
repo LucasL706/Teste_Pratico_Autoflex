@@ -13,8 +13,8 @@ export default function Navbar() {
       </Link>
 
       <Link
-        to="/products"
-        className={location.pathname.startsWith("/products") ? "active" : ""}
+        to="/product"
+        className={location.pathname.startsWith("/product") ? "active" : ""}
       >
         Products
       </Link>

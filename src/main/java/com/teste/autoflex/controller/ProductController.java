@@ -28,6 +28,9 @@ public class ProductController {
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ProductDTO update(@RequestBody ProductDTO product) {return service.update(product);}
 
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ProductDTO updateById(@RequestBody ProductDTO product) {return service.update(product);}
+
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id){
         service.delete(id);

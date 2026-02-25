@@ -33,7 +33,7 @@ export default function ProductList({ products, onDelete }) {
                 <td>{p.name}</td>
                 <td>R$ {p.price}</td>
                 <td>
-                    <Link to={`/raw-materials/update/${p.id}`}>
+                    <Link to={`/product/update/${p.id}`}>
                         <button className="edit-btn">Edit</button>
                     </Link>
 

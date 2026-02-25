@@ -4,6 +4,7 @@ import "./App.css"
 import Home from "./pages/Home";
 import ProductPage from "./pages/ProductPage";
 import CreateProduct from "./pages/CreateProduct";
+import UpdateProduct from "./pages/UpdateProduct";
 import RawMaterialPage from "./pages/RawMaterialPage";
 import CreateRawMaterial from "./pages/CreateRawMaterial";
 import UpdateRawMaterial from "./pages/UpdateRawMaterial";
@@ -50,18 +51,23 @@ function App() {
         />
 
         <Route
-          path="/products"
+          path="/product"
           element={<ProductPage products={products} />}
         />
 
         <Route
-          path="/products/create"
+          path="/product/create"
           element={
             <CreateProduct
               rawMaterials={rawMaterials}
               onProductAdded={fetchProducts}
             />
           }
+        />
+
+        <Route
+          path="/product/update/:id"
+          element={<UpdateProduct onSuccess={fetchProducts} />}
         />
 
         <Route
@@ -86,7 +92,6 @@ function App() {
         <Route
             path="/rawMaterial/update/:id"
             element={<UpdateRawMaterial onSuccess={fetchRawMaterials} />} />
-
       </Routes>
     </Router>
   );

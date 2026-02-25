@@ -36,13 +36,15 @@ public class ProductServices {
         
         return parseListObjects(repository.findAll(), ProductDTO.class);
     }
-    
+
+
     public ProductDTO findById(Long id){
         logger.info("Finding one product!");
-        
-        var entity = repository.findById(id).orElseThrow( () -> new ResourceNotFoundException("No records found for this ID!"));
-        
-        return parseObject(entity, ProductDTO.class);
+
+        var entity = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+
+        return convertProductEntityToDTO(entity); // Dozer can't map N:N relationships then I had to do it myself in this particular case
     }
 
     @Transactional
@@ -149,5 +151,30 @@ public class ProductServices {
      */
     public void priceValidation(BigDecimal price){
         if(price.compareTo(BigDecimal.ZERO) <= 0) { throw new IllegalArgumentException("The price must be higher than zero"); }
+    }
+
+    // Dozer can't map N:N relationships then I had to do it myself in this particular case
+    private ProductDTO convertProductEntityToDTO(Product entity) {
+        ProductDTO dto = new ProductDTO();
+
+        dto.setId(entity.getId());
+        dto.setCode(entity.getCode());
+        dto.setName(entity.getName());
+        dto.setPrice(entity.getPrice());
+
+        List<ProductRawMaterialDTO> materials = entity.getRawMaterialList()
+                .stream()
+                .map(prm -> {
+                    ProductRawMaterialDTO materialDTO = new ProductRawMaterialDTO();
+                    materialDTO.setRawMaterialId(prm.getRawMaterial().getId());
+                    materialDTO.setRawMaterialName(prm.getRawMaterial().getName());
+                    materialDTO.setRequiredQuantity(prm.getRequiredQuantity());
+                    return materialDTO;
+                })
+                .toList();
+
+        dto.setRawMaterials(materials);
+
+        return dto;
     }
 }

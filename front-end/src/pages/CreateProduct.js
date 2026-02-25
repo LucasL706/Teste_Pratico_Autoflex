@@ -1,12 +1,20 @@
 import ProductForm from "../components/ProductForm";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function CreateProduct({ rawMaterials, onProductAdded }) {
+
+  const navigate = useNavigate();
+
+  const handleSuccess = () => {
+    onProductAdded();
+    navigate("/product");
+  };
+
   return (
-    <div>
+    <div className="container">
       <h1>New Product</h1>
 
-      <Link to="/">
+      <Link to="/product">
         <button>Back</button>
       </Link>
 

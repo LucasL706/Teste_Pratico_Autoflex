@@ -7,7 +7,7 @@ export default function ProductPage({ products }) {
       <div className="page-header">
         <h2>Products</h2>
 
-        <Link to="/products/create">
+        <Link to="/product/create">
           <button>New Product</button>
         </Link>
         </div>
