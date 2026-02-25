@@ -2,9 +2,12 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "./App.css"
 import Home from "./pages/Home";
+import ProductPage from "./pages/ProductPage";
 import CreateProduct from "./pages/CreateProduct";
 import RawMaterialPage from "./pages/RawMaterialPage";
 import CreateRawMaterial from "./pages/CreateRawMaterial";
+import UpdateRawMaterial from "./pages/UpdateRawMaterial";
+import Navbar from "./components/Navbar";
 
 function App() {
 
@@ -17,7 +20,7 @@ function App() {
       const data = await response.json();
       setProducts(data);
     } catch (error) {
-      console.error("Erro ao buscar produtos:", error);
+      console.error("Error to find products:", error);
     }
   };
 
@@ -27,7 +30,7 @@ function App() {
       const data = await response.json();
       setRawMaterials(data);
     } catch (error) {
-      console.error("Erro ao buscar matérias-primas:", error);
+      console.error("Error to find raw materials:", error);
     }
   };
 
@@ -38,11 +41,17 @@ function App() {
 
   return (
     <Router>
+      <Navbar />
       <Routes>
 
         <Route
           path="/"
-          element={<Home products={products} />}
+          element={<Home products={products} rawMaterials={rawMaterials} />}
+        />
+
+        <Route
+          path="/products"
+          element={<ProductPage products={products} />}
         />
 
         <Route
@@ -56,20 +65,27 @@ function App() {
         />
 
         <Route
-          path="/raw-materials"
+          path="/rawMaterial"
           element={
-            <RawMaterialPage rawMaterials={rawMaterials} />
+            <RawMaterialPage
+              rawMaterials={rawMaterials}
+              fetchRawMaterials={fetchRawMaterials}
+            />
           }
         />
 
         <Route
-          path="/raw-materials/create"
+          path="/rawMaterial/create"
           element={
             <CreateRawMaterial
               onRawMaterialAdded={fetchRawMaterials}
             />
           }
         />
+
+        <Route
+            path="/rawMaterial/update/:id"
+            element={<UpdateRawMaterial onSuccess={fetchRawMaterials} />} />
 
       </Routes>
     </Router>

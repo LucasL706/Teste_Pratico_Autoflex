@@ -37,9 +37,6 @@ export default function ProductForm({ onProductAdded, rawMaterials }) {
       }))
     };
 
-    console.log("Product sent: ", newProduct);
-    console.log(JSON.stringify(newProduct, null, 2));
-
     axios.post("http://localhost:8080/product", newProduct)
       .then(response => {
          console.log("Successfully saved");

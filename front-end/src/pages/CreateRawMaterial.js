@@ -7,14 +7,14 @@ export default function CreateRawMaterial({ onRawMaterialAdded }) {
 
   const handleSuccess = () => {
     onRawMaterialAdded();
-    navigate("/raw-materials");
+    navigate("/rawMaterial");
   };
 
   return (
     <div className="container">
       <h1>New Raw Material</h1>
 
-      <Link to="/">
+      <Link to="/rawMaterial">
         <button>Back</button>
       </Link>
 

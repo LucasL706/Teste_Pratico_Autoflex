@@ -29,6 +29,9 @@ public class RawMaterialController {
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public RawMaterialDTO update(@RequestBody RawMaterialDTO rawMaterial) {return service.update(rawMaterial);}
 
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public RawMaterialDTO updateById(@RequestBody RawMaterialDTO rawMaterial) {return service.update(rawMaterial);}
+
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id){
         service.delete(id);

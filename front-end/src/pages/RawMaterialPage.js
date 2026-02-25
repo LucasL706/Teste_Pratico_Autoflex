@@ -1,16 +1,30 @@
 import RawMaterialList from "../components/RawMaterialList";
 import { Link } from "react-router-dom";
 
-export default function RawMaterialPage({ rawMaterials }) {
+export default function RawMaterialPage({ rawMaterials, fetchRawMaterials }) {
+
+const handleDeleteRawMaterial = async (id) => {
+  await fetch(`http://localhost:8080/rawMaterial/${id}`, {
+    method: "DELETE"
+  });
+
+  fetchRawMaterials();
+};
+
   return (
     <div className="container">
-      <h1>Raw Materials</h1>
+      <div className="page-header">
+        <h2>Raw Materials</h2>
 
-      <Link to="/raw-materials/create">
-        <button>Add New Raw Material</button>
-      </Link>
+        <Link to="/raw-materials/create">
+          <button>New Raw Material</button>
+        </Link>
+        </div>
 
-      <RawMaterialList rawMaterials={rawMaterials} />
+        <RawMaterialList
+          rawMaterials={rawMaterials}
+          onDelete={handleDeleteRawMaterial}
+        />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios";
 
 export default function RawMaterialForm({ onSuccess }) {
 
@@ -12,18 +13,24 @@ export default function RawMaterialForm({ onSuccess }) {
     const newRawMaterial = {
       code,
       name,
-      quantity: Number(quantity)
+      stockQuantity: Number(quantity) // ⚠️ mesmo nome do back-end
     };
 
     try {
-      await fetch("http://localhost:8080/raw-materials", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(newRawMaterial)
-      });
+      const response = await axios.post(
+        "http://localhost:8080/rawMaterial",
+        newRawMaterial,
+        { headers: { "Content-Type": "application/json" } }
+      );
 
+      console.log("Successfully saved:", response.data);
+
+      // Limpar formulário
+      setName("");
+      setCode("");
+      setQuantity("");
+
+      // Callback para atualizar a lista de materiais
       onSuccess();
 
     } catch (error) {
@@ -32,46 +39,44 @@ export default function RawMaterialForm({ onSuccess }) {
   };
 
   return (
-  <div className="form-container">
-    <form onSubmit={handleSubmit}>
+    <div className="form-container">
+      <form onSubmit={handleSubmit}>
+        <h2>Add Raw Material</h2>
 
-      <h2>Add Product</h2>
+        <div className="field">
+          <label>Name</label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
 
-      <div className="field">
-        <label>Name</label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-      </div>
+        <div className="field">
+          <label>Code</label>
+          <input
+            type="text"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            required
+          />
+        </div>
 
-      <div className="field">
-        <label>Code</label>
-        <input
-          type="text"
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          required
-        />
-      </div>
+        <div className="field">
+          <label>Quantity in stock</label>
+          <input
+            type="number"
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}
+            required
+          />
+        </div>
 
-      <div className="field">
-        <label>Quantity in stock</label>
-        <input
-          type="number"
-          value={quantity}
-          onChange={(e) => setQuantity(Number(e.target.value))}
-          required
-        />
-      </div>
-
-      <button type="submit" className="save-btn">
-        Register Raw Material
-      </button>
-
-    </form>
-  </div>
+        <button type="submit" className="save-btn">
+          Register Raw Material
+        </button>
+      </form>
+    </div>
   );
 }

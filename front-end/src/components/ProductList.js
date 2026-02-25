@@ -1,4 +1,13 @@
-export default function ProductList({ products }) {
+import { Link } from "react-router-dom";
+
+export default function ProductList({ products, onDelete }) {
+
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this raw material?")) {
+      onDelete(id);
+    }
+  };
+
   return (
     <div className="container">
       <h2>List of Products</h2>
@@ -13,6 +22,7 @@ export default function ProductList({ products }) {
               <th>Code</th>
               <th>Name</th>
               <th>Price</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -22,6 +32,18 @@ export default function ProductList({ products }) {
                 <td>{p.code}</td>
                 <td>{p.name}</td>
                 <td>R$ {p.price}</td>
+                <td>
+                    <Link to={`/raw-materials/update/${p.id}`}>
+                        <button className="edit-btn">Edit</button>
+                    </Link>
+
+                    <button
+                        className="delete-btn"
+                            onClick={() => handleDelete(p.id)}
+                    >
+                    Delete
+                        </button>
+                    </td>
               </tr>
             ))}
           </tbody>
