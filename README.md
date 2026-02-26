@@ -106,41 +106,75 @@ Product 1 --- N ProductRawMaterial N --- 1 RawMaterial
 src/main/java/com/teste/autoflex
 │
 ├── configuration
+
 ├── controller
+
 ├── data
+
 ├── exception
+
 ├── mapper
+
 ├── model
+
 ├── repository
+
 ├── service
+
 └── Startup.java
 
 src/front-end
+
 │   App.css
+
 │   App.js
+
 │   App.test.js
+
 │   index.css
+
 │   index.js
+
 │   logo.svg
+
 │   reportWebVitals.js
+
 │   setupTests.js
+
 │
+
 ├── components/
+
 │       Navbar.js
+
 │       ProductForm.js
+
 │       ProductionCapacityList.js
+
 │       ProductList.js
+
 │       RawMaterialForm.js
+
 │       RawMaterialList.js
+
 │
+
 └── pages/
+
         CreateProduct.js
+        
         CreateRawMaterial.js
+        
         Home.js
+        
         ProductPage.js
+        
         RawMaterialPage.js
+        
         UpdateProduct.js
+        
         UpdateRawMaterial.js
+        
 
 
 ---
@@ -150,20 +184,32 @@ src/front-end
 ### application.properties
 
 spring.datasource.url=jdbc:mysql://localhost:3306/autoflex
+
 spring.datasource.username=root
+
 spring.datasource.password=your_password
 
+
 spring.jpa.hibernate.ddl-auto=update
+
 spring.jpa.show-sql=true
+
 spring.jpa.properties.hibernate.format_sql=true
 
 ### Running the Application
+
 1 - Clone the repository
+
 git clone https://github.com/your-username/autoflex.git
+
 cd autoflex
+
 2 - Build the project
+
 mvn clean install
+
 3 - Run the application
+
 mvn spring-boot:run
 
 
@@ -198,10 +244,15 @@ Docker containerization
 Architecture Highlights
 
 Layered Architecture
+
 DTO Pattern
+
 Clean Service Validation
+
 Proper JPA Relationship Modeling
+
 Business Rule Enforcement
+
 Transaction Management
 
 Author
